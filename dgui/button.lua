@@ -11,6 +11,7 @@ function PANE:Init()
 	self.text = "LOL"
 	self.pressed = false
 	self.font = "DermaDefault"
+	self.textColor = Color(255, 255, 255)
 end
 
 function PANE:SetPos(x, y)
@@ -31,7 +32,7 @@ function PANE:Draw()
 	DGUI.offsetDraw(self.pos.x, self.pos.y)
 
 	if x and y and !self:IsOutOfReach() then
-		if x >= self.pos.x and x <= self.pos.x + self.size.w and y >= self.pos.y and y <= self.pos.y + self.size.h then
+		if x >= self.pos.x and x <= self.pos.x + self.size.w and y >= self.pos.y and y <= self.pos.y + self.size.h and !self:IsBlocked() then
 			if input.IsKeyDown(_G["KEY_"..input.LookupBinding("+use"):upper()]) then
 				if !self.pressed then
 					self:OnClick()
@@ -51,9 +52,9 @@ function PANE:Draw()
 	end
 
 	if !self:IsOutOfReach() then
-		draw.SimpleText(self.text, self.font, self.size.w / 2, self.size.h / 2, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(self.text, self.font, self.size.w / 2, self.size.h / 2, self.textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	else
-		draw.SimpleText("OUT OF REACH", self.font, self.size.w / 2, self.size.h / 2, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText("OUT OF REACH", self.font, self.size.w / 2, self.size.h / 2, self.textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
 	DGUI.offsetDraw(0, 0)
@@ -64,12 +65,20 @@ function PANE:IsOutOfReach()
 	return DGUI.GetCursorVector() and LocalPlayer():EyePos():Distance(DGUI.GetVector(self.pos.x + self.size.w / 2, self.pos.y + self.size.h / 2)) > self.range
 end
 
+function PANE:IsBlocked()
+	return LocalPlayer():EyePos():Distance(LocalPlayer():GetEyeTrace().HitPos) < LocalPlayer():EyePos():Distance(DGUI.GetCursorVector())
+end
+
 function PANE:SetFont(font)
 	self.font = font
 end
 
 function PANE:SetText(txt)
 	self.text = txt
+end
+
+function PANE:SetTextColor(color)
+	self.textColor = color
 end
 
 function PANE:OnIdle()

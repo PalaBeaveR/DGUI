@@ -103,6 +103,10 @@ function offsetDraw(offsetX, offsetY)
 	surface.DrawLine = function(startX, startY, endX, endY)
 		oldsurface.DrawLine(startX + offsetX, startY + offsetY, endX + offsetX, endY + offsetY)
 	end
+
+	surface.DrawTexturedRectUV = function(x, y, width, height, startU, startV, endU, endV)
+		oldsurface.DrawTexturedRectUV(x + offsetX, y + offsetY, width, height, startU, startV, endU, endV)
+	end
 end
 
 includeDir("dgui")
